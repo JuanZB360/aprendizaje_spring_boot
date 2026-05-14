@@ -1,11 +1,28 @@
 # 🔗 Navegación rápida
 
-| Tema | Acceso |
-|---|---|
-| 🚀 Spring Boot | [**Abrir**](./Springboot.md) |
-| 📦 Starter | [**Abrir**](./starter.md) |
-| 🧩 Beans | [**Abrir**](./beans.md) |
-| 🏷️ Anotaciones | [**Abrir**](./anotaciones.md) |
-| ⚡ Spring Initializr | [**Abrir**](./initializr.md) |
+---
+
+## 🚀 Spring Boot
+📄 [**Abrir documentación**](./Springboot.md)
+
+---
+
+## 📦 Starter
+📄 [**Abrir documentación**](./starter.md)
+
+---
+
+## 🧩 Beans
+📄 [**Abrir documentación**](./beans.md)
+
+---
+
+## 🏷️ Anotaciones
+📄 [**Abrir documentación**](./anotaciones.md)
+
+---
+
+## ⚡ Spring Initializr
+📄 [**Abrir documentación**](./initializr.md)
 
 ---
