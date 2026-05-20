@@ -13,11 +13,11 @@ Estas anotaciones le indican a Spring que una clase es un Bean y cuál es su res
 
 | Anotación | Función |
 |---|---|
-| 🧩 ***@Component*** | Componente base administrado por Spring. |
-| 🌐 ***@Controller / @RestController*** | Manejo de rutas y peticiones HTTP. |
-| 🧠 ***@Service*** | Contiene la lógica de negocio. |
-| 🗄️ ***@Repository*** | Comunicación con la base de datos. |
-| 📄 ***@Entity*** | Representa una tabla de la base de datos. |
+| 🧩 [**@Component**](./@Component.md) | Componente base administrado por Spring. |
+| 🌐 [**@Controller / @RestController**](./@Controller.md) | Manejo de rutas y peticiones HTTP. |
+| 🧠 [**@Service**](./@Service.md) | Contiene la lógica de negocio. |
+| 🗄️ [**@Repository**](./@Repository.md) | Comunicación con la base de datos. |
+| 📄 [**@Entity**](./@Entity.md) | Representa una tabla de la base de datos. |
 
 ---
 
