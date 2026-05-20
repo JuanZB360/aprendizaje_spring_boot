@@ -33,9 +33,9 @@ Para empezar a programar en el Backend, debes conocer estas categorías:
 
 ---
 
-[**A. Para definir “Quién es quién”**](./definir.md)
-[**B. Para conectar piezas**](./conectar.md)
-[**C. Para configurar la aplicación**](./configurar.md)
+- [**A. Para definir “Quién es quién”**](./definir.md)
+- [**B. Para conectar piezas**](./conectar.md)
+- [**C. Para configurar la aplicación**](./configurar.md)
 
 ---
 

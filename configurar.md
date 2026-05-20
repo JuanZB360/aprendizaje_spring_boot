@@ -1,3 +1,7 @@
+## 🔙 [***Volver***](./anotaciones.md)
+
+---
+
 # C. Para configurar la aplicación  
 ## ⚙️ Configuración
 
@@ -53,3 +57,5 @@ public class SeguridadConfig {
 - @Bean es como un consultor externo que tú tienes que contratar y presentarle a la empresa a través de un contrato (@Configuration).
 
 ---
+
+## 🔙 [***Volver***](./anotaciones.md)
