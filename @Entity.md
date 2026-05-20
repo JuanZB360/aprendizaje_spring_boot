@@ -1,5 +1,5 @@
-## 🔙 [***Volver***](./definir.md)
-<a href="javascript:history.back()">## 🔙 [***Volver***]</a>
+## 🔙 [***Volver explicacion de estereotipos***](./definir.md)
+## 🔙 [***Volver consttruccion de entidades***](./entidades.md)
 
 ---
 
@@ -102,4 +102,5 @@ public class Usuario {
 
 ---
 
-## 🔙 [***Volver***](./definir.md)
+## 🔙 [***Volver explicacion de estereotipos***](./definir.md)
+## 🔙 [***Volver consttruccion de entidades***](./entidades.md)

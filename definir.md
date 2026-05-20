@@ -38,20 +38,6 @@ Cliente
    ↓
 Base de Datos
 
-```text
-Cliente
-   ↓
-@RestController
-   ↓
-@Service
-   ↓
-@Repository
-   ↓
-@Entity
-   ↓
-Base de Datos
-```
-
 ---
 
 📌 **Flujo explicado**

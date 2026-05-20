@@ -89,8 +89,7 @@ Para usar persistencia de datos debes agregar dependencias en el archivo:
 
 - [***conexión Base de Datos***](./conexiónBD.md)
 - [***Entidades***](./entidades.md)
-
-- [***@Repository***](./@Repository.md)
+- [***Repositorio***](./Repositorio.md)
 
 ---
 
