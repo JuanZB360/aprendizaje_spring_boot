@@ -37,6 +37,7 @@ Cliente
 @Entity
    ↓
 Base de Datos
+```
 
 ---
 
