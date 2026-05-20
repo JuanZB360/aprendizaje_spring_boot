@@ -18,5 +18,7 @@
 
 - [***@OneToOne***](./@OneToOne.md)
 
+- [***@JoinColumn***](./@JoinColumn.md)
+
 ---
 ## 🔙 [***Volver***](./persistencia.md)
