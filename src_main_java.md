@@ -25,8 +25,10 @@ Dentro de este directorio se encuentra la clase principal del proyecto.
 
 Normalmente contiene la anotación:
 
-`@SpringBootApplication`
-
+- [***`@SpringBootApplication`***](./@SpringBootApplication.md)
+- [***`@SpringBootConfiguration o @Configuration`***](./@SpringBootConfiguration.md)
+- [***`@ENableAutoConfiguration`***](./@ENableAutoConfiguration.md)
+- [***`@ComponentScan`***](./@ComponentScan.md)
 ---
 
 # 📌 ¿Por qué es importante?

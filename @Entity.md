@@ -1,4 +1,5 @@
 ## 🔙 [***Volver***](./definir.md)
+<a href="javascript:history.back()">## 🔙 [***Volver***]</a>
 
 ---
 
@@ -43,7 +44,7 @@ Define:
 
 - qué datos existen,
 - cómo se organizan,
-- y qué información será almacenada en la base de datos.
+- qué información será almacenada en la base de datos.
 
 ---
 
@@ -60,6 +61,8 @@ Usuario           →        usuarios
 Producto          →        productos
 Factura           →        facturas
 ```
+
+***Nota:*** por convencion las clases con `@Entity` se nombran en singular y en base de datos en plural. 
 
 ---
 
