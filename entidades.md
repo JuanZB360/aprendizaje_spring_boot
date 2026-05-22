@@ -16,9 +16,11 @@
 
 # Relaciones:
 
-- [***@OneToOne***](./@OneToOne.md)
-
 - [***@JoinColumn***](./@JoinColumn.md)
+- [***@OneToOne***](./@OneToOne.md)
+- [***@OneToMany y @ManyToOne***](./@OneToMany.md)
+- [***@ManyToMany***](./@ManyToMany.md)
+
 
 ---
 ## 🔙 [***Volver***](./persistencia.md)

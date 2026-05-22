@@ -1,4 +1,4 @@
-## 🔙 [***Volver***](./persistencia.md)
+## 🔙 [***Volver***](./entidades.md)
 ---
 
 # 🏗️ Construyendo una relación `@OneToOne`
@@ -384,4 +384,4 @@ La magia de una relación bidireccional es que:
 
 ---
 
-## 🔙 [***Volver***](./persistencia.md)
+## 🔙 [***Volver***](./entidades.md)
