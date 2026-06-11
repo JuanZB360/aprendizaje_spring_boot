@@ -37,11 +37,10 @@ Y él sabe exactamente qué hacer.
 
 Dentro de nuestro `JuegoRepository` podemos declarar todos los poderes que tendrá el recepcionista.
 
-`java
+```java
 @Repository
 public interface JuegoRepository extends JpaRepository<Juego, Long> {
 
-```
 // ==========================================
 // 1. BUSCAR
 // ==========================================
@@ -73,10 +72,9 @@ boolean existsByTitulo(String titulo);
 
 @Transactional
 void deleteByDisponibleFalse();
-```
 
 }
-`
+```
 
 ---
 
@@ -96,11 +94,11 @@ Sirve para traer registros desde la base de datos.
 
 ### Ejemplos
 
-`java
+```java
 Optional<Juego> findByTitulo(String titulo);
 
 List<Juego> findByTituloContaining(String palabraClave);
-`
+```
 
 ### 👶 Mente de niño
 
@@ -124,9 +122,9 @@ Sirve para contar registros sin traerlos completos.
 
 ### Ejemplo
 
-`java
+```java
 long countByConsola(String consola);
-`
+```
 
 ### 👶 Mente de niño
 
@@ -150,9 +148,9 @@ Sirve para verificar si algo existe.
 
 ### Ejemplo
 
-`java
+```java
 boolean existsByTitulo(String titulo);
-`
+```
 
 ### 👶 Mente de niño
 
@@ -177,10 +175,10 @@ Sirve para eliminar registros.
 
 ### Ejemplo
 
-`java
+```java
 @Transactional
 void deleteByDisponibleFalse();
-`
+```
 
 ### 👶 Mente de niño
 
@@ -216,9 +214,9 @@ Busca coincidencias parciales.
 
 ### Ejemplo
 
-`java
+```java
 findByTituloContaining(String palabraClave);
-`
+```
 
 ### 👶 Mente de niño
 
@@ -239,9 +237,9 @@ Permite combinar condiciones.
 
 ### Ejemplo
 
-`java
+```java
 findByTituloAndLocalId(String titulo, Long localId);
-`
+```
 
 ### 👶 Mente de niño
 
@@ -263,9 +261,9 @@ Menor que.
 
 ### Ejemplo
 
-`java
+```java
 findByPrecioLessThan(Double precio);
-`
+```
 
 ### 👶 Mente de niño
 
@@ -279,9 +277,9 @@ Mayor que.
 
 ### Ejemplo
 
-`java
+```java
 findByPrecioGreaterThan(Double precio);
-`
+```
 
 ### 👶 Mente de niño
 
@@ -295,9 +293,9 @@ Entre dos valores.
 
 ### Ejemplo
 
-`java
+```java
 findByPrecioBetween(Double minimo, Double maximo);
-`
+```
 
 ### 👶 Mente de niño
 
@@ -311,9 +309,9 @@ Solo valores verdaderos.
 
 ### Ejemplo
 
-`java
+```java
 findByDisponibleTrue();
-`
+```
 
 ### 👶 Mente de niño
 
@@ -327,9 +325,9 @@ Solo valores falsos.
 
 ### Ejemplo
 
-`java
+```java
 findByDisponibleFalse();
-`
+```
 
 ### 👶 Mente de niño
 
@@ -343,9 +341,9 @@ Orden ascendente.
 
 ### Ejemplo
 
-`java
+```java
 findByOrderByTituloAsc();
-`
+```
 
 ### 👶 Mente de niño
 
@@ -361,9 +359,9 @@ Orden descendente.
 
 ### Ejemplo
 
-`java
+```java
 findByOrderByTituloDesc();
-`
+```
 
 ### 👶 Mente de niño
 
