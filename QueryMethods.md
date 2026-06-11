@@ -2,7 +2,7 @@
 
 ---
 
-# 🎩 Sección 2: El Recepcionista Inteligente
+# 🎩 El Recepcionista Inteligente
 
 ## Query Methods (Consultas por nombre de método)
 
