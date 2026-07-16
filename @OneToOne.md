@@ -211,7 +211,6 @@ public class Local {
         fetch = FetchType.LAZY,
         orphanRemoval = true
     )
-
     @JoinColumn(name = "gerente_id", referencedColumnName = "id")
     private Gerente gerente;
 }

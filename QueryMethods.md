@@ -45,25 +45,25 @@ public interface JuegoRepository extends JpaRepository<Juego, Long> {
 // 1. BUSCAR
 // ==========================================
 
-Optional<Juego> findByTitulo(String titulo);
+Optional<Juego> findByTitulo(String titulo); // Buscar Juego por Titulo
 
-List<Juego> findByTituloContaining(String palabraClave);
+List<Juego> findByTituloContaining(String palabraClave); // Buscar los Juegos que Contengan en su titulo una palabra clave
 
-List<Juego> findByTituloAndLocalId(String titulo, Long localId);
+Optional<Juego> findByTituloAndLocalId(String titulo, Long localId); // Buscar Juego por titulo que sea de un local en especifico 
 
 
 // ==========================================
 // 2. CONTAR
 // ==========================================
 
-long countByConsola(String consola);
+long countByConsola(String consola); // Contar las Consolas
 
 
 // ==========================================
 // 3. VERIFICAR EXISTENCIA
 // ==========================================
 
-boolean existsByTitulo(String titulo);
+boolean existsByTitulo(String titulo); // Verificar si Existe un juego
 
 
 // ==========================================
@@ -71,7 +71,7 @@ boolean existsByTitulo(String titulo);
 // ==========================================
 
 @Transactional
-void deleteByDisponibleFalse();
+void deleteByDisponibleFalse(); // Borrar los Juegos que no estan disponibles
 
 }
 ```

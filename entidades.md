@@ -21,6 +21,10 @@
 - [***@OneToMany y @ManyToOne***](./@OneToMany.md)
 - [***@ManyToMany***](./@ManyToMany.md)
 
+# Simplificacion del Codigo:
+
+- [***Lombok***](./Lombok.md)
+- [***Serializacion***](./Serializacion.md)
 
 ---
 ## 🔙 [***Volver***](./persistencia.md)
