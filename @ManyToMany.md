@@ -1,290 +1,576 @@
 ## 🔙 [***Volver***](./entidades.md)
----
-
-# 🔗 `@ManyToMany`
-## 🎮 Relación Muchos a Muchos
-
-Esta es una relación donde:
-
-- muchos Clientes pueden jugar muchos Juegos,
-- y muchos Juegos pueden pertenecer a muchos Clientes.
 
 ---
 
-# 🧠 La idea importante
+# 🔗 Construyendo una relación `@ManyToMany`
 
-En bases de datos:
+## 🎮 Los Clientes y los Juegos
 
-## ❌ Un "Muchos a Muchos" no existe directamente.
+Hasta ahora hemos aprendido dos tipos de relaciones:
 
-Por eso Spring Boot crea una:
+* `@OneToOne`
+* `@OneToMany` / `@ManyToOne`
 
-# 🌉 Tabla Intermedia
+En ambas siempre existía una **llave foránea (`Foreign Key`)** dentro de una de las tablas.
 
-También llamada:
+Pero ahora aparece un nuevo escenario.
 
-- tabla puente,
-- tabla intermedia,
-- o tabla de unión.
+Imagina un Local de Videojuegos donde:
 
----
+* muchos Clientes pueden jugar muchos Juegos;
+* y un mismo Juego puede ser jugado por muchos Clientes.
 
-# 👶 Explicación sencilla
+Visualmente la relación sería así.
 
-Imagina un:
+```text
+Clientes
 
-## 📘 Libro de Registro
+Juan
+María
+Luis
+Ana
 
-Cada vez que un Cliente juega un Juego,
-el sistema escribe algo así:
+        ↕️
 
-- Juan → Minecraft
-- María → FIFA
-- Luis → Mario Kart
+Minecraft
+FIFA
+Mario Kart
+Zelda
 
-La tabla puente guarda esas conexiones.
-
----
-
-# 🛣️ Relación Unidireccional
-## 🎮 El Juego conoce a sus Clientes
-
-Aquí:
-
-- el Juego sí tiene la lista de Clientes,
-- pero el Cliente NO sabe qué Juegos ha jugado.
-
----
-
-# 👶 Explicación sencilla
-
-Cada Juego tiene un papel pegado atrás con los nombres de los niños que lo jugaron.
-
-Entonces:
-
-- Minecraft sabe quién lo jugó,
-- pero Juan no tiene ninguna lista de juegos en su casa.
-
----
-
-# 🧩 Código del Juego
-## 🎮 El dueño de la lista
-
-```java
-@ManyToMany
-@JoinTable(
-    name = "juego_cliente_uni", // Nombre de la tabla puente en la base de datos
-    joinColumns = @JoinColumn(name = "juego_id"), // Cómo se llamará mi ID en la tabla puente
-    inverseJoinColumns = @JoinColumn(name = "cliente_id") // Cómo se llamará el ID de la otra tabla
-)
-private List<Cliente> clientes;
+Juegos
 ```
 
----
+Ningún Cliente está limitado a jugar un solo Juego.
 
-# 🔍 Explicación
-
-## `@ManyToMany`
-
-Muchos Juegos pueden conectarse con muchos Clientes.
+Y ningún Juego está limitado a ser utilizado por un solo Cliente.
 
 ---
 
-## `@JoinTable`
+# 🤔 El problema
 
-Crea la tabla intermedia.
+Hasta ahora las relaciones eran sencillas.
+
+En `@ManyToOne`, por ejemplo, bastaba con guardar un `local_id` dentro de la tabla `juegos`.
+
+```text
+Tabla juegos
+
+id
+titulo
+local_id
+```
+
+Pero ahora...
+
+¿Cómo guardaríamos que:
+
+* Juan juega Minecraft;
+* Juan juega FIFA;
+* María juega Minecraft;
+* Luis juega Mario Kart?
+
+Si intentáramos agregar un solo `cliente_id` dentro de la tabla `juegos`, solamente podríamos guardar un Cliente por Juego.
+
+Y si agregáramos un solo `juego_id` dentro de la tabla `clientes`, solamente podríamos guardar un Juego por Cliente.
+
+Ninguna de las dos soluciones funciona.
 
 ---
 
-## `name = "juego_cliente_uni"`
+# 🌉 La solución: Una Tabla Puente
 
-Nombre de la tabla puente en SQL.
+Las bases de datos relacionales resuelven este problema utilizando una **tabla intermedia**.
+
+También se conoce como:
+
+* Tabla puente.
+* Tabla de unión.
+* Tabla intermedia.
+* Join Table.
+
+Esta tabla no almacena información adicional.
+
+Su única responsabilidad es conectar ambas entidades.
+
+Visualmente:
+
+```text
+Clientes
+
+Juan
+María
+Luis
+
+        │
+        ▼
+
+Tabla Puente
+
+cliente_id | juego_id
+
+        ▲
+        │
+
+Juegos
+
+Minecraft
+FIFA
+Mario Kart
+```
+
+Ahora sí podemos registrar todas las combinaciones posibles.
 
 ---
 
-## `joinColumns`
+# 👶 La Analogía del Libro de Registro
 
-Define cómo se llamará el ID del Juego dentro de la tabla puente.
+Imagina que el Local tiene un cuaderno en la recepción.
+
+Cada vez que un Cliente juega un Juego, el encargado escribe una línea.
+
+```text
+Juan  → Minecraft
+
+Juan  → FIFA
+
+María → Minecraft
+
+Luis  → Mario Kart
+```
+
+Ese cuaderno es exactamente la tabla puente.
+
+No guarda información del Cliente.
+
+No guarda información del Juego.
+
+Solo registra quién jugó qué.
 
 ---
 
-## `inverseJoinColumns`
+# 🗄️ ¿Cómo se vería en SQL?
 
-Define cómo se llamará el ID del Cliente dentro de la tabla puente.
+Tabla **clientes**
+
+| id | nombre |
+| -- | ------ |
+| 1  | Juan   |
+| 2  | María  |
+
+Tabla **juegos**
+
+| id | titulo    |
+| -- | --------- |
+| 10 | Minecraft |
+| 20 | FIFA      |
+
+Tabla **cliente_juego**
+
+| cliente_id | juego_id |
+| ---------- | -------- |
+| 1          | 10       |
+| 1          | 20       |
+| 2          | 10       |
+
+Observa algo importante.
+
+No existe ninguna llave foránea en las tablas `clientes` o `juegos`.
+
+Las dos llaves viven dentro de la tabla puente.
 
 ---
 
-# 👤 Código del Cliente
-## 😴 El Cliente distraído
+# 🛣️ Primera etapa
+
+# Relación Unidireccional
+
+Comenzaremos permitiendo que únicamente el Juego conozca a sus Clientes.
+
+Visualmente:
+
+```text
+🎮 Juego
+
+↓
+
+👤 Clientes
+```
+
+Pero los Clientes todavía no conocerán sus Juegos.
+
+---
+
+# 👶 La Analogía de la Lista de Jugadores
+
+Imagina que detrás de cada Juego hay una hoja pegada.
+
+Por ejemplo.
+
+```text
+Minecraft
+
+Jugadores
+
+✔ Juan
+
+✔ María
+
+✔ Luis
+```
+
+El Juego sabe quién lo jugó.
+
+Pero si tomamos a Juan y preguntamos:
+
+> "¿Qué Juegos has jugado?"
+
+Juan responderá:
+
+> "No tengo ninguna lista."
+
+---
+
+# 🎮 Construyendo la entidad `Juego`
 
 ```java
 @Entity
-public class Cliente {
+@Table(name = "juegos")
+public class Juego {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nombre;
+
+    private String titulo;
+
+    @ManyToMany
+    @JoinTable(
+        name = "cliente_juego",
+        joinColumns = @JoinColumn(name = "juego_id"),
+        inverseJoinColumns = @JoinColumn(name = "cliente_id")
+    )
+    private List<Cliente> clientes = new ArrayList<>();
 
 }
 ```
 
 ---
 
-# 📌 Importante
+# 🔍 Analizando el código
 
-Aquí NO existe:
+## `@ManyToMany`
 
-`List<Juego> juegos`
-
-porque el Cliente todavía no sabe qué Juegos ha jugado.
+Indica que muchos Juegos pueden relacionarse con muchos Clientes.
 
 ---
 
-# 🔄 Relación Bidireccional
-## 🔁 Todos se conocen
-
-Ahora queremos que:
-
-- el Juego conozca sus Clientes,
-- y el Cliente conozca sus Juegos.
-
----
-
-# 👶 Explicación sencilla
-
-El Juego sigue teniendo su lista de niños.
-
-Pero ahora el Cliente también recibe un:
-
-## 📔 Álbum de Juegos
-
-Cada vez que juega algo nuevo,
-lo guarda en su álbum.
-
-Ahora ambos se conocen.
-
----
-
-# 🎮 Código del Juego
-## 🏆 El dueño de la tabla puente
+## `@JoinTable`
 
 ```java
-@ManyToMany
-@JoinTable(
-    name = "juego_cliente_bi",
-    joinColumns = @JoinColumn(name = "juego_id"),
-    inverseJoinColumns = @JoinColumn(name = "cliente_id")
-)
+@JoinTable(...)
+```
+
+Le dice a Hibernate:
+
+> "La relación no utilizará una llave foránea."
+
+> "Utilizará una tabla puente."
+
+---
+
+## `name`
+
+```java
+name = "cliente_juego"
+```
+
+Es el nombre que tendrá la tabla intermedia.
+
+---
+
+## `joinColumns`
+
+```java
+joinColumns = @JoinColumn(name = "juego_id")
+```
+
+Representa la llave foránea que apunta al Juego.
+
+---
+
+## `inverseJoinColumns`
+
+```java
+inverseJoinColumns = @JoinColumn(name = "cliente_id")
+```
+
+Representa la llave foránea que apunta al Cliente.
+
+---
+
+# ⚠️ ¿Quién es el dueño de la relación?
+
+Igual que en los capítulos anteriores, aquí también existe un **Owning Side**.
+
+En este caso será la entidad que contiene:
+
+```java
+@JoinTable
+```
+
+Es decir:
+
+```text
+🎮 Juego
+```
+
+Hibernate entiende que será esta entidad quien administrará la tabla puente.
+
+---
+
+# 🤔 El problema de la relación unidireccional
+
+Ahora podemos hacer esto.
+
+```java
+Juego juego = ...
+
+List<Cliente> clientes = juego.getClientes();
+```
+
+Pero...
+
+Si obtenemos un Cliente.
+
+```java
+Cliente cliente = ...
+```
+
+Y hacemos.
+
+```java
+cliente.getJuegos();
+```
+
+El método no existe.
+
+¿Por qué?
+
+Porque todavía no le enseñamos al Cliente cuáles Juegos ha jugado.
+
+---
+
+# 🔄 Segunda etapa
+
+# Relación Bidireccional
+
+Ahora queremos que ambos objetos puedan navegar entre sí.
+
+Visualmente:
+
+```text
+           👤 Cliente
+               ▲
+               │
+        List<Juego>
+               │
+               ▼
+Juego ◄────────────► Cliente
+```
+
+Ahora podremos escribir.
+
+```java
+juego.getClientes();
+```
+
+Y también.
+
+```java
+cliente.getJuegos();
+```
+
+---
+
+# 👤 Construyendo la entidad `Cliente`
+
+```java
+@Entity
+@Table(name = "clientes")
+public class Cliente {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+
+    @ManyToMany(
+        mappedBy = "clientes",
+        fetch = FetchType.LAZY
+    )
+    private List<Juego> juegos = new ArrayList<>();
+
+}
+```
+
+---
+
+# 🔍 ¿Qué hace `mappedBy`?
+
+Observa esta línea.
+
+```java
+mappedBy = "clientes"
+```
+
+Muchos creen que `"clientes"` hace referencia a la tabla.
+
+No.
+
+Hace referencia al atributo que existe dentro de la entidad `Juego`.
+
+```java
 private List<Cliente> clientes;
 ```
 
+Hibernate interpreta esta instrucción así.
+
+> "La relación ya existe."
+
+> "Ya hay una tabla puente."
+
+> "Simplemente utiliza esa relación para construir esta colección."
+
+Gracias a `mappedBy`:
+
+* no se crea una segunda tabla puente;
+* no se duplican las relaciones;
+* ambas entidades quedan sincronizadas.
+
 ---
 
-# 👤 Código del Cliente
-## 📔 El dueño del álbum
+# 🤖 ¿Cómo construye Hibernate la lista?
+
+Supongamos que recuperamos un Cliente.
 
 ```java
-@ManyToMany(mappedBy = "clientes", fetch = FetchType.LAZY)
-private List<Juego> juegos;
+Cliente cliente = clienteRepository.findById(1L).get();
+```
+
+Después hacemos.
+
+```java
+cliente.getJuegos();
+```
+
+Hibernate consulta automáticamente la tabla puente.
+
+```sql
+SELECT juego.*
+FROM juegos juego
+INNER JOIN cliente_juego cj
+ON juego.id = cj.juego_id
+WHERE cj.cliente_id = 1;
+```
+
+Con ese resultado construye:
+
+```java
+List<Juego>
+```
+
+La colección no estaba almacenada en memoria.
+
+Hibernate la creó leyendo la tabla puente.
+
+---
+
+# ⚡ Buenas prácticas en `@ManyToMany`
+
+## 🦥 Utiliza `FetchType.LAZY`
+
+Las colecciones `ManyToMany` pueden crecer muchísimo.
+
+Si utilizaras `FetchType.EAGER`, Hibernate cargaría todos los registros relacionados inmediatamente.
+
+Eso puede generar:
+
+* muchas consultas SQL;
+* mayor consumo de memoria;
+* peor rendimiento.
+
+Por eso la recomendación general es utilizar:
+
+```java
+fetch = FetchType.LAZY
 ```
 
 ---
 
-# 🔍 Explicación
+## 🚫 Evita `CascadeType.REMOVE`
 
-## `mappedBy = "clientes"`
+Imagina que eliminas un Cliente.
 
-Le dice a Spring:
+```java
+clienteRepository.delete(cliente);
+```
 
-> "La relación real ya fue creada en la variable `clientes` de la clase Juego".
+Si utilizaras:
 
-Gracias a esto:
+```java
+CascadeType.REMOVE
+```
 
-- NO se crea otra tabla,
-- NO se duplican relaciones,
-- y todo queda conectado correctamente.
+Hibernate podría eliminar también los Juegos relacionados.
 
----
+Sería un desastre, porque esos Juegos probablemente también pertenezcan a otros Clientes.
 
-## `fetch = FetchType.LAZY`
+En una relación `@ManyToMany` normalmente solo se elimina el registro correspondiente de la tabla puente, no las entidades relacionadas.
 
-Los Juegos solo se cargarán cuando realmente se necesiten.
+Por esta razón, en la mayoría de los casos se evita utilizar:
 
-Esto protege la memoria del servidor.
-
----
-
-# ⚠️ Reglas importantes de `@ManyToMany`
-
----
-
-# 🦥 Usa siempre `LAZY`
-
-Si fuera `EAGER`:
-
-buscar un Cliente podría traer:
-
-- miles de Juegos,
-- miles de Clientes,
-- y muchísima información innecesaria.
+* `CascadeType.REMOVE`
+* `CascadeType.ALL`
 
 ---
 
-# 🚫 Evita `CascadeType.REMOVE`
+# 📊 Comparación de las relaciones aprendidas
 
-Imagina esto:
-
-- borras un Cliente,
-- y accidentalmente también se borran todos los Juegos.
-
-💥 Sería un desastre.
-
-Por eso en `@ManyToMany` normalmente:
-
-- NO se usa `REMOVE`,
-- y tampoco `CascadeType.ALL`.
+| Relación      | ¿Dónde vive la relación? | Lado propietario          |
+| ------------- | ------------------------ | ------------------------- |
+| `@OneToOne`   | Llave foránea            | Entidad con `@JoinColumn` |
+| `@ManyToOne`  | Llave foránea            | Entidad `@ManyToOne`      |
+| `@ManyToMany` | Tabla puente             | Entidad con `@JoinTable`  |
 
 ---
 
-# 🧠 Resumen rápido
+# 🎒 Resumen
 
-## 🛣️ Unidireccional
-
-- Juego → conoce Clientes.
-- Cliente → no conoce Juegos.
-
----
-
-## 🔄 Bidireccional
-
-- Juego → conoce Clientes.
-- Cliente → conoce Juegos.
+| Concepto             | Función                                                                  |
+| -------------------- | ------------------------------------------------------------------------ |
+| `@ManyToMany`        | Permite que muchas entidades se relacionen con muchas otras.             |
+| `@JoinTable`         | Crea la tabla puente que conecta ambas entidades.                        |
+| `joinColumns`        | Define la llave foránea de la entidad propietaria.                       |
+| `inverseJoinColumns` | Define la llave foránea de la entidad relacionada.                       |
+| `mappedBy`           | Indica que la relación ya existe y evita crear una segunda tabla puente. |
+| `FetchType.LAZY`     | Carga la colección únicamente cuando se necesita.                        |
 
 ---
 
-# 🌉 La tabla puente
+# 🏆 Conclusión
 
-Spring crea automáticamente una tabla intermedia que conecta:
+La relación `@ManyToMany` es diferente a las anteriores porque **no utiliza una única llave foránea**.
 
-- `juego_id`
-- con `cliente_id`
+En su lugar, Hibernate crea una **tabla puente** que almacena las conexiones entre ambas entidades.
 
----
+Al igual que en las demás relaciones, siempre existe:
 
-# 🎮 Explicación para recordar
+* un **lado propietario**, que administra la relación mediante `@JoinTable`;
+* un **lado inverso**, que utiliza `mappedBy` para navegar sin crear una segunda relación.
 
-## Unidireccional
-
-🎮 El Juego tiene la lista.
-
-👤 El Cliente no recuerda nada.
+Comprender este patrón es fundamental para dominar JPA, ya que todas las relaciones siguen la misma filosofía: siempre hay una entidad que administra la relación y otra que simplemente la representa.
 
 ---
 
-## Bidireccional
-
-🎮 El Juego tiene la lista.
-
-👤 El Cliente tiene un álbum con sus Juegos.
-
----
 ## 🔙 [***Volver***](./entidades.md)

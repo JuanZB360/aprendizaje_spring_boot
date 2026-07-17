@@ -8,18 +8,18 @@
 - [***@Column***](./@Column.md)
 - [***Primary key***](./PrimaryKey.md)
 
-# Poderes de las relaciones:
-
-- [***Cascade***](./Cascade.md)
-- [***Fetch***](./Fetch.md)
-- [***OrphanRemoval***](./OrphanRemoval.md)
-
 # Relaciones:
 
 - [***@JoinColumn***](./@JoinColumn.md)
 - [***@OneToOne***](./@OneToOne.md)
 - [***@OneToMany y @ManyToOne***](./@OneToMany.md)
 - [***@ManyToMany***](./@ManyToMany.md)
+
+# Poderes de las relaciones:
+
+- [***Cascade***](./Cascade.md)
+- [***Fetch***](./Fetch.md)
+- [***OrphanRemoval***](./OrphanRemoval.md)
 
 # Simplificacion del Codigo:
 

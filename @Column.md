@@ -1,4 +1,4 @@
-## 🔙 [***Volver***](./persistencia.md)
+## 🔙 [***Volver***](./entidades.md)
 
 ---
 
@@ -284,4 +284,4 @@ Define cómo se almacenará un dato dentro de la tabla.
 
 ---
 
-## 🔙 [***Volver***](./persistencia.md)
+## 🔙 [***Volver***](./entidades.md)

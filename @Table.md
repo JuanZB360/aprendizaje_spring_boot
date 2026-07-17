@@ -1,4 +1,4 @@
-## 🔙 [***Volver***](./persistencia.md)
+## 🔙 [***Volver***](./entidades.md)
 
 ---
 
@@ -92,4 +92,4 @@ normalmente se usa para:
 
 ---
 
-## 🔙 [***Volver***](./persistencia.md)
+## 🔙 [***Volver***](./entidades.md)

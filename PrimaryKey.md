@@ -1,4 +1,4 @@
-## 🔙 [***Volver***](./persistencia.md)
+## 🔙 [***Volver***](./entidades.md)
 
 ---
 
@@ -146,4 +146,4 @@ Estas anotaciones trabajan juntas para:
 
 ---
 
-## 🔙 [***Volver***](./persistencia.md)
+## 🔙 [***Volver***](./entidades.md)

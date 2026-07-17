@@ -1,4 +1,4 @@
-## 🔙 [***Volver***](./persistencia.md)
+## 🔙 [***Volver***](./entidades.md)
 
 ---
 
@@ -179,4 +179,4 @@ Los atributos funcionan como reglas del sistema:
 
 ---
 
-## 🔙 [***Volver***](./persistencia.md)
+## 🔙 [***Volver***](./entidades.md)

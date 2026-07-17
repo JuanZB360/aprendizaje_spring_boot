@@ -2,250 +2,627 @@
 
 ---
 
-# 🔗 `@ManyToOne` y `@OneToMany`
-## 🎮 Relación entre Local y Juegos
+# 🔗 Construyendo una relación `@ManyToOne` y `@OneToMany`
 
-En esta relación:
+## 🎮 El Local de Videojuegos y sus Juegos
 
-- muchos Juegos pueden pertenecer a un solo Local.
-- y un Local puede tener muchos Juegos.
+En este capítulo aprenderemos cómo construir una relación entre dos entidades utilizando:
 
----
+* `@ManyToOne`
+* `@OneToMany`
+* `@JoinColumn`
+* `mappedBy`
+* `cascade`
+* `fetch`
+* `orphanRemoval`
 
-# 🛣️ En el Camino de Una Sola Vía
-## 📍 La Relación Unidireccional
+Usaremos la siguiente historia.
 
-En este mundo, los Juegos son los únicos que saben en qué Local están guardados.
+```text
+🎮 Local de Videojuegos
 
-El Local no tiene ninguna lista de juegos.
+↓
 
----
+🎮 Juegos
+```
 
-# 👶 Explicación sencilla
+Un Local puede tener muchos Juegos.
 
-Imagina una tienda de videojuegos.
-
-Cada juego tiene un sticker pegado atrás que dice:
-
-`"Este juego pertenece al Local del Centro"`.
-
-Entonces:
-
-- el Juego sí sabe cuál es su Local,
-- pero el Local NO sabe cuáles juegos tiene guardados.
-
-Si le preguntas al Local:
-
-> "Muéstrame todos tus juegos"
-
-el Local respondería:
-
-> "No tengo ninguna lista".
+Pero cada Juego solamente puede pertenecer a un único Local.
 
 ---
 
-# 🧠 Idea importante
+# 📦 Starter necesario
 
-En `@ManyToOne`:
+Para trabajar con entidades y relaciones en Spring Boot necesitas incluir el siguiente starter.
 
-- la entidad `Juego`
-es quien guarda la llave real de la relación.
-
-Por eso:
-
-- el candado físico (`Foreign Key`)
-vive dentro de la tabla de Juegos.
-
----
-
-# 🧩 Código del Juego
-## 🎮 El que conoce al Local
-
-```java
-@ManyToOne(fetch = FetchType.LAZY)
-@JoinColumn(name = "local_id")
-private Local local;
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
 ```
 
 ---
 
-# 🔍 Explicación
+# 🛣️ Primera etapa
+
+# Relación Unidireccional
+
+## El camino de una sola vía
+
+Comenzaremos construyendo una relación sencilla.
+
+En este escenario:
+
+* el Juego conoce al Local;
+* pero el Local no conoce a sus Juegos.
+
+Visualmente sería algo así.
+
+```text
+🎮 Juego
+      │
+      ▼
+🏢 Local
+```
+
+---
+
+# 👶 La Analogía del Sticker
+
+Imagina una tienda de videojuegos.
+
+Cada juego tiene un pequeño sticker pegado en la caja que dice:
+
+```text
+"Este juego pertenece al Local del Centro."
+```
+
+Entonces ocurre algo muy interesante.
+
+Si tomas un juego cualquiera puedes leer el sticker y descubrir inmediatamente a qué Local pertenece.
+
+Pero...
+
+Si vas al Local y preguntas:
+
+> "¿Qué juegos tienes?"
+
+El Local responderá:
+
+> "No tengo ninguna lista."
+
+Porque nunca le enseñamos cuáles eran sus juegos.
+
+---
+
+# 🧠 La idea importante
+
+En una relación `@ManyToOne`, el objeto que guarda la referencia es el Juego.
+
+Por eso será él quien almacene la llave foránea dentro de la base de datos.
+
+---
+
+# 🎮 Construyendo la entidad `Juego`
+
+```java
+@Entity
+@Table(name = "juegos")
+public class Juego {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String titulo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "local_id")
+    private Local local;
+
+}
+```
+
+---
+
+# 🔍 Analizando el código
 
 ## `@ManyToOne`
 
-Muchos juegos pueden pertenecer a un único Local.
+```java
+@ManyToOne
+```
+
+Le dice a Hibernate:
+
+> "Muchos Juegos pueden pertenecer al mismo Local."
+
+Visualmente:
+
+```text
+🎮 Juego
+
+↓
+
+🏢 Local
+```
 
 ---
 
-## `fetch = FetchType.LAZY`
+## `@JoinColumn`
 
-El Local solo se buscará en la base de datos cuando realmente lo necesites.
+```java
+@JoinColumn(name = "local_id")
+```
+
+Esta anotación tiene dos responsabilidades.
+
+### 1️⃣ Crear la llave foránea
+
+Hibernate agregará una columna llamada:
+
+```text
+local_id
+```
+
+Dentro de la tabla:
+
+```text
+juegos
+```
 
 ---
 
-## `@JoinColumn(name = "local_id")`
+### 2️⃣ Convertir al Juego en el dueño de la relación
 
-Crea la columna:
+Como la llave foránea vive dentro de la tabla `juegos`, Hibernate entiende que será el objeto `Juego` quien administrará esa relación.
 
-`local_id`
-
-dentro de la tabla de juegos.
-
-Esa columna guarda el ID del Local al que pertenece cada juego.
+Por eso decimos que `Juego` es el **Owning Side** (lado propietario).
 
 ---
 
-# 🏢 Código del Local
-## 😴 El Local distraído
+# 🗄️ Resultado en la base de datos
 
-`@Entity
+Tabla **locales**
+
+| id | nombre   |
+| -- | -------- |
+| 1  | GameZone |
+
+Tabla **juegos**
+
+| id | titulo     | local_id |
+| -- | ---------- | -------- |
+| 1  | FIFA       | 1        |
+| 2  | Minecraft  | 1        |
+| 3  | Mario Kart | 1        |
+
+Observa que la llave foránea únicamente existe dentro de la tabla `juegos`.
+
+---
+
+# ⚠️ ¿Qué puede hacer el Juego?
+
+Como conoce al Local, podemos escribir:
+
+```java
+Juego juego = ...
+
+Local local = juego.getLocal();
+```
+
+Pero ocurre un problema.
+
+---
+
+# 🤔 El problema de la relación unidireccional
+
+Supongamos que ahora recuperamos un Local.
+
+```java
+Local local = ...
+```
+
+Y queremos conocer todos sus Juegos.
+
+Naturalmente intentaríamos hacer esto.
+
+```java
+local.getJuegos();
+```
+
+Pero aparece un error.
+
+Ese método no existe.
+
+¿Por qué?
+
+Porque el Local nunca aprendió cuáles Juegos le pertenecen.
+
+Solo los Juegos conocen al Local.
+
+---
+
+# 🚗 Una calle de un único sentido
+
+La relación funciona exactamente igual que una calle de una sola vía.
+
+```text
+🎮 Juego
+
+↓
+
+🏢 Local
+```
+
+Puedes viajar desde el Juego hacia el Local.
+
+Pero nunca desde el Local hacia los Juegos.
+
+---
+
+# 🎯 La solución
+
+Queremos que el Local también conozca todos sus Juegos.
+
+Visualmente la relación quedará así.
+
+```text
+          🏢 Local
+             ▲
+             │
+     List<Juego>
+             │
+             ▼
+🎮 Juego ─────────► Local
+```
+
+Ahora podremos navegar en ambos sentidos.
+
+```java
+juego.getLocal();
+```
+
+Y también.
+
+```java
+local.getJuegos();
+```
+
+Pero aquí aparece una nueva duda.
+
+---
+
+# 🤯 La gran pregunta
+
+Si ahora ambos objetos se conocen...
+
+¿La base de datos guardará dos relaciones?
+
+La respuesta es:
+
+**No.**
+
+Y aquí entra nuevamente el concepto de **Owning Side** y **Inverse Side**.
+
+---
+
+# 🗄️ Java y la Base de Datos son mundos diferentes
+
+En memoria tendremos esto.
+
+```text
+JAVA
+
+        Local
+           ▲
+           │
+     List<Juego>
+           │
+           ▼
+Juego ─────────► Local
+```
+
+Pero en la base de datos solamente existirá esto.
+
+Tabla **locales**
+
+```text
+id
+nombre
+```
+
+Tabla **juegos**
+
+```text
+id
+titulo
+local_id
+```
+
+Observa algo muy importante.
+
+La colección:
+
+```java
+List<Juego>
+```
+
+No existe en la base de datos.
+
+Solo existe dentro de Java.
+
+Hibernate la construirá automáticamente cuando sea necesaria.
+
+---
+
+# 👑 El Lado Propietario
+
+La llave foránea vive en:
+
+```text
+juegos.local_id
+```
+
+Por lo tanto el dueño de la relación es:
+
+```text
+🎮 Juego
+```
+
+Porque es quien puede modificar esa columna.
+
+---
+
+# 🔄 El Lado Inverso
+
+El Local no crea ninguna llave foránea.
+
+Simplemente tendrá una lista para poder navegar hacia sus Juegos.
+
+Por eso utilizaremos:
+
+```java
+mappedBy
+```
+
+---
+
+# 🏢 Construyendo la entidad `Local`
+
+```java
+@Entity
+@Table(name = "locales")
 public class Local {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nombreLocal;
 
-}`
+    private String nombre;
 
----
+    @OneToMany(
+            mappedBy = "local",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
+    private List<Juego> juegos = new ArrayList<>();
 
-# 📌 Importante
-
-Aquí NO existe:
-
-`List<Juego> juegos`
-
-porque el Local todavía no conoce a sus juegos.
-
----
-
-# 🔄 El Camino de Doble Vía
-## 🔁 Relación Bidireccional
-
-Ahora queremos que:
-
-- el Juego conozca al Local,
-- y el Local conozca todos sus Juegos.
+}
+```
 
 ---
 
-# 👶 Explicación sencilla
-
-Ahora el Local recibe una:
-
-## 📂 Súper Carpeta
-
-Cada vez que llega un juego nuevo,
-el Local lo apunta dentro de su lista.
-
-Entonces:
-
-- el Juego sigue teniendo su sticker,
-- pero ahora el Local también tiene una lista completa de juegos.
-
----
-
-# 🏢 Código del Local
-## 📂 El dueño de la lista
-
-`@OneToMany(
-    mappedBy = "local",
-    cascade = CascadeType.ALL,
-    fetch = FetchType.LAZY
-)
-private List<Juego> juegos;`
-
----
-
-# 🔍 Explicación
+# 🔍 Analizando el código
 
 ## `@OneToMany`
 
-Un Local puede tener muchos Juegos.
+```java
+@OneToMany
+```
+
+Le dice a Hibernate:
+
+> "Este Local puede tener muchos Juegos."
 
 ---
 
 ## `mappedBy = "local"`
 
-Le dice a Spring:
+Esta es la parte más importante.
 
-> "La relación verdadera ya existe dentro de la variable `local` de la clase Juego".
+Muchos creen que `"local"` hace referencia a la tabla.
 
-⚠️ Gracias a esto:
+No es así.
 
-- NO se crea otra columna,
-- NO se crea otra tabla,
-- y se evita duplicar relaciones.
+Hace referencia al atributo:
 
----
+```java
+private Local local;
+```
 
-## `cascade = CascadeType.ALL`
+Que existe dentro de la entidad `Juego`.
 
-Si el Local:
+Hibernate interpreta esta instrucción así:
 
-- se crea,
-- se actualiza,
-- o se elimina,
+> "No crees una nueva relación."
 
-sus Juegos también serán afectados automáticamente.
+> "La relación ya existe dentro del atributo `local` de la entidad Juego."
 
----
+Gracias a esto:
 
-## `fetch = FetchType.LAZY`
-
-Los Juegos solo se cargarán cuando realmente los necesites.
+* no se crea otra llave foránea;
+* no se crea otra tabla;
+* no se duplican las relaciones.
 
 ---
 
-# 🎮 Código del Juego
-## 🔒 El dueño del candado real
+# 🤖 ¿Cómo construye Hibernate la lista?
 
-`@ManyToOne(fetch = FetchType.LAZY)
-@JoinColumn(name = "local_id")
-private Local local;`
+Supongamos que haces esto.
 
----
+```java
+Local local = localRepository.findById(1L).get();
+```
 
-# 📌 Regla importante
+Y luego.
 
-Aunque la relación sea bidireccional:
+```java
+local.getJuegos();
+```
 
-la columna física sigue existiendo solamente en la tabla Juegos.
+Hibernate ejecutará internamente una consulta muy parecida a esta.
 
----
+```sql
+SELECT *
+FROM juegos
+WHERE local_id = 1;
+```
 
-# 🧠 Resumen rápido
+Obtendrá todos los Juegos cuyo `local_id` sea `1`.
 
-## 🛣️ Unidireccional
+Con ese resultado construirá automáticamente:
 
-- Solo `Juego` conoce al `Local`.
-- El `Local` no tiene lista de juegos.
-- Más simple y ligero.
+```java
+List<Juego>
+```
 
----
+Es decir, la lista no estaba almacenada en la base de datos.
 
-## 🔄 Bidireccional
-
-- `Juego` conoce al `Local`.
-- `Local` tiene `List<Juego>`.
-- Permite navegar en ambas direcciones.
-
----
-
-# 🎮 Explicación para recordar
-
-## Unidireccional
-
-📦 El Juego tiene el sticker.
-
-🏢 El Local no tiene lista.
+Hibernate la creó leyendo todos los registros relacionados.
 
 ---
 
-## Bidireccional
+# 🎯 Navegando por la relación
 
-📦 El Juego tiene el sticker.
+Ahora podemos movernos en ambas direcciones.
 
-🏢 El Local tiene una carpeta con todos sus juegos.
+Desde un Juego.
+
+```java
+Juego juego = ...
+
+Local local = juego.getLocal();
+```
+
+Y también desde un Local.
+
+```java
+Local local = ...
+
+List<Juego> juegos = local.getJuegos();
+```
+
+Todo gracias a la relación bidireccional.
+
+---
+
+# ⚡ Configuraciones adicionales
+
+La relación también incluye tres configuraciones importantes.
+
+## `cascade`
+
+Permite propagar automáticamente operaciones como:
+
+* guardar;
+* actualizar;
+* eliminar.
+
+Hacia todos los Juegos relacionados.
+
+---
+
+## `fetch`
+
+Controla cuándo Hibernate debe cargar la colección de Juegos.
+
+Con `FetchType.LAZY` los Juegos solamente se consultarán cuando realmente los necesites.
+
+---
+
+## `orphanRemoval`
+
+Si un Juego deja de pertenecer al Local y ya no tiene otro dueño, Hibernate podrá eliminarlo automáticamente.
+
+---
+
+# 🧠 Comparación entre Unidireccional y Bidireccional
+
+## 🛣️ Relación Unidireccional
+
+```text
+🎮 Juego
+
+↓
+
+🏢 Local
+```
+
+* El Juego conoce al Local.
+* El Local no conoce a sus Juegos.
+* Más sencilla.
+* Consume menos memoria.
+
+---
+
+## 🔄 Relación Bidireccional
+
+```text
+          🏢 Local
+             ▲
+             │
+     List<Juego>
+             │
+             ▼
+🎮 Juego ─────────► Local
+```
+
+* El Juego conoce al Local.
+* El Local conoce todos sus Juegos.
+* Permite navegar en ambos sentidos.
+* Requiere `mappedBy`.
+
+---
+
+# 📊 Comparación con `@OneToOne`
+
+| Relación                  | ¿Dónde vive la llave foránea?         | Lado Propietario          | Lado Inverso           |
+| ------------------------- | ------------------------------------- | ------------------------- | ---------------------- |
+| `@OneToOne`               | En la entidad que tiene `@JoinColumn` | Entidad con `@JoinColumn` | Entidad con `mappedBy` |
+| `@ManyToOne / @OneToMany` | En la tabla del lado `Many`           | `@ManyToOne`              | `@OneToMany`           |
+
+---
+
+# 🎒 Resumen
+
+| Concepto        | Función                                                                   |
+| --------------- | ------------------------------------------------------------------------- |
+| `@ManyToOne`    | Muchos registros pertenecen a una sola entidad.                           |
+| `@OneToMany`    | Una entidad puede tener muchos registros relacionados.                    |
+| `@JoinColumn`   | Crea la llave foránea y convierte a la entidad en el lado propietario.    |
+| `mappedBy`      | Indica que la relación ya existe y evita crear una segunda llave foránea. |
+| `cascade`       | Propaga operaciones hacia las entidades relacionadas.                     |
+| `fetch`         | Decide cuándo cargar la colección.                                        |
+| `orphanRemoval` | Elimina automáticamente entidades huérfanas.                              |
+
+---
+
+# 🏆 Conclusión
+
+Una relación `@ManyToOne` / `@OneToMany` sigue exactamente la misma filosofía que aprendimos con `@OneToOne`.
+
+Siempre existe:
+
+* un **lado propietario**, que contiene la llave foránea y administra la relación;
+* un **lado inverso**, que simplemente permite navegar en sentido contrario utilizando `mappedBy`.
+
+La diferencia es que ahora un único Local puede estar relacionado con muchos Juegos, mientras que cada Juego solamente puede pertenecer a un único Local.
+
+Una vez comprendas esta estructura, habrás entendido el funcionamiento interno de la mayoría de las relaciones utilizadas en JPA y Hibernate.
 
 ---
 
