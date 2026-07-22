@@ -6,9 +6,14 @@ Las entidades son los juguetes y los repositorios son los recepcionistas que los
 
 Para contruir Servicios de una manera correcta vamos a dividirlo en:
 
-- [***creacion del servicio***](./creacionServicio.md)
-- [***inyeccion de dependencias***](./inyeccionDependencias.md)
+- [***Creacion del servicio***](./creacionServicio.md)
+- [***Inyeccion de dependencias***](./inyeccionDependencias.md)
 - [***@Transactional***](./@Transactional.md)
+
+### Validaciones
+
+- [***Validaciones Personalizadas***](./implementacionValidacion.md)
+- [***@Validation***](./@Validation.md)
 
 ---
 
